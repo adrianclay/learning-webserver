@@ -1,22 +1,35 @@
-import com.sun.net.httpserver.HttpServer;
-
 import java.io.IOException;
-import java.net.InetSocketAddress;
+import java.io.OutputStreamWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class WebServer {
-    HttpServer server;
+    private ServerSocket server;
+    private int port;
 
     public WebServer(int port)
     {
-        try {
-            server = HttpServer.create();
-            server.bind(new InetSocketAddress("localhost", port), 180);
-            server.createContext("/cheese", new CheeseHandler());
-            server.start();
-        }
-        catch (IOException e)
-        {
-
-        }
+        this.port = port;
     }
+
+    public void Start() throws IOException {
+        server = new ServerSocket(port);
+        Thread t = new Thread(() -> {
+            try {
+                Socket newSocket = server.accept();
+
+                OutputStreamWriter osw = new OutputStreamWriter(newSocket.getOutputStream());
+                osw.write("test\n");
+                osw.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        t.start();
+    }
+
+    public void Stop() throws IOException {
+        server.close();
+    }
+
 }
