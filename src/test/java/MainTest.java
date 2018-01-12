@@ -1,3 +1,4 @@
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -10,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 public class MainTest {
     @Test
+    @Ignore
     public void EndToEndTest() throws IOException {
         Main.main(new String[]{"8080"});
         String actual = makeGetRequest(new URL("http://localhost:8080/cheese"));
