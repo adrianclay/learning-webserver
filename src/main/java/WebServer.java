@@ -23,20 +23,12 @@ public class WebServer {
             while(true) {
                 try {
                     Socket newSocket = server.accept();
-                    InputStreamReader isr = new InputStreamReader(newSocket.getInputStream());
-                    BufferedReader br = new BufferedReader(isr);
 
-                    String input = br.readLine();
+                    Request request = readRequest(newSocket);
+                    Response response = this.requestRouter.respondTo(request);
+                    writeResponse(newSocket, response);
 
-
-                    Response r = this.requestRouter.respondTo(getRequestFromString(input));
-
-                    OutputStreamWriter osw = new OutputStreamWriter(newSocket.getOutputStream());
-                    String headers = String.join("\n", r.headers);
-                    osw.write("HTTP/1.1 " + r.responseCode + "\n" + headers + "\n\n" + r.body + "\n");
-                    osw.flush();
                     newSocket.close();
-
                 }
                 catch (SocketException e) {
                     // swallow exceptions
@@ -48,6 +40,20 @@ public class WebServer {
             }
         });
         t.start();
+    }
+
+    private Request readRequest(Socket newSocket) throws IOException {
+        InputStreamReader isr = new InputStreamReader(newSocket.getInputStream());
+        BufferedReader br = new BufferedReader(isr);
+
+        return getRequestFromString(br.readLine());
+    }
+
+    private void writeResponse(Socket newSocket, Response response) throws IOException {
+        OutputStreamWriter osw = new OutputStreamWriter(newSocket.getOutputStream());
+        String headers = String.join("\n", response.headers);
+        osw.write("HTTP/1.1 " + response.responseCode + "\n" + headers + "\n\n" + response.body + "\n");
+        osw.flush();
     }
 
     private Request getRequestFromString(String input) {
