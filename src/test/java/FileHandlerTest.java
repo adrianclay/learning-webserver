@@ -15,27 +15,18 @@ public class FileHandlerTest {
 
     @Test
     public void Returns404Response() throws IOException{
-        Request request = new Request();
-        request.method = "GET";
-        request.route = "/ham";
-        Response response = fileHandler.respondTo(request);
+        Response response = fileHandler.respondTo(getRequest("/ham.html"));
         assertEquals("404 NOT FOUND", response.responseCode);
         assertEquals("Content-Length: 0", response.headers[0]);
         assertEquals("Content-Type: text/plain", response.headers[1]);
         assertArrayEquals(new byte[0], response.body);
-
     }
 
     @Test
-    public void ReturnsFileContents() throws IOException {
+    public void ReturnstsTxtContents() throws IOException {
         String expected_content = "delicious tasty cheese";
-        writeStringToCheeseFile(expected_content);
-
-        Request request = new Request();
-        request.method = "GET";
-        request.route = "/brollies.txt";
-
-        Response response = fileHandler.respondTo(request);
+        writeStringToFile(expected_content, "brollies.txt");
+        Response response = fileHandler.respondTo(getRequest("/brollies.txt"));
 
         assertEquals("200 OK", response.responseCode);
         assertEquals("Content-Length: " + expected_content.length(), response.headers[0]);
@@ -44,32 +35,11 @@ public class FileHandlerTest {
     }
 
     @Test
-    public void ReturnsMultiLineFileContents() throws IOException {
-        String expected_content = "Delicious tasty cheese\nAnother great line of content";
-        writeStringToCheeseFile(expected_content);
+    public void ReturnsHTMLContents() throws IOException {
+        String expected_content = "<html><body><h1>Delicious tasty cheese\nAnother great line of content</h1></body></html>";
+        writeStringToFile(expected_content, "brollies.html");
 
-        Request request = new Request();
-        request.method = "GET";
-        request.route = "/brollies.txt";
-
-        Response response = fileHandler.respondTo(request);
-
-        assertEquals("200 OK", response.responseCode);
-        assertEquals("Content-Length: " + expected_content.length(), response.headers[0]);
-        assertEquals("Content-Type: text/plain", response.headers[1]);
-        assertArrayEquals(expected_content.getBytes(), response.body);
-    }
-
-    @Test
-    public void ReturnsMultiLineHTMLContents() throws IOException {
-        String expected_content = "<html><head>Chuckles</head><body><h1>Delicious tasty cheese\nAnother great line of content</h1></body></html>";
-        writeStringtoCheeseHTMLFile(expected_content);
-
-        Request request = new Request();
-        request.method = "GET";
-        request.route = "/brollies.html";
-
-        Response response = fileHandler.respondTo(request);
+        Response response = fileHandler.respondTo(getRequest("/brollies.html"));
 
         assertEquals("200 OK", response.responseCode);
         assertEquals("Content-Length: " + expected_content.length(), response.headers[0]);
@@ -77,15 +47,16 @@ public class FileHandlerTest {
         assertArrayEquals(expected_content.getBytes(), response.body);
     }
 
-    private void writeStringToCheeseFile(String expected) throws IOException {
-        FileWriter out = new FileWriter("brollies.txt");
-        out.write(expected);
-        out.close();
+    private Request getRequest(String route) {
+        Request request = new Request();
+        request.method = "GET";
+        request.route = route;
+        return request;
     }
 
-    private void writeStringtoCheeseHTMLFile(String content) throws IOException{
-        FileWriter out = new FileWriter("brollies.html");
-        out.write(content);
+    private void writeStringToFile(String expected, String fileName) throws IOException {
+        FileWriter out = new FileWriter(fileName);
+        out.write(expected);
         out.close();
     }
 }
