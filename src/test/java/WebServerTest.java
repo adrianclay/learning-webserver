@@ -83,7 +83,6 @@ public class WebServerTest {
         assertEquals(br.readLine(), "Content-Length: 0");
         assertEquals(br.readLine(), "Content-Type: text/plain");
         assertEquals(br.readLine(), "");
-        assertEquals(br.readLine(), "");
         s.close();
     }
 

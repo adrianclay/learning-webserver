@@ -1,5 +1,5 @@
 public class Response {
     String responseCode;
-    String body;
+    byte[] body;
     String[] headers;
 }

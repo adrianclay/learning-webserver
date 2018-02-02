@@ -52,8 +52,10 @@ public class WebServer {
     private void writeResponse(Socket newSocket, Response response) throws IOException {
         OutputStreamWriter osw = new OutputStreamWriter(newSocket.getOutputStream());
         String headers = String.join("\n", response.headers);
-        osw.write("HTTP/1.1 " + response.responseCode + "\n" + headers + "\n\n" + response.body + "\n");
+        osw.write("HTTP/1.1 " + response.responseCode + "\n" + headers + "\n\n");
         osw.flush();
+        newSocket.getOutputStream().write(response.body);
+        newSocket.getOutputStream().flush();
     }
 
     private Request getRequestFromString(String input) {

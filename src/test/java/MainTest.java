@@ -14,7 +14,7 @@ public class MainTest {
     @Ignore
     public void EndToEndTest() throws IOException {
         Main.main(new String[]{"8080"});
-        String actual = makeGetRequest(new URL("http://localhost:8080/cheese"));
+        String actual = makeGetRequest(new URL("http://localhost:8080/cheese.txt"));
         assertEquals("Delicious.\n", actual);
     }
 

@@ -2,6 +2,6 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        new WebServer(Integer.parseInt(args[0]), new MockRequestRouter()).Start();
+        new WebServer(Integer.parseInt(args[0]), new FileHandler()).Start();
     }
 }
