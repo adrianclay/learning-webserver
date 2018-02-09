@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class WebServerTest {
-    private static final int PORT = 8090;
+    private static final int PORT = 8099;
     private WebServer ws;
     private MockRequestRouter requestRouter;
 
