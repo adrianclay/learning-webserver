@@ -25,7 +25,7 @@ public class FileHandlerTest {
     @Test
     public void ReturnstsTxtContents() throws IOException {
         String expected_content = "delicious tasty cheese";
-        writeStringToFile(expected_content, "brollies.txt");
+        FileHelper.writeStringToFile(expected_content, "brollies.txt");
         Response response = fileHandler.respondTo(getRequest("/brollies.txt"));
 
         assertEquals("200 OK", response.responseCode);
@@ -37,7 +37,7 @@ public class FileHandlerTest {
     @Test
     public void ReturnsHTMLContents() throws IOException {
         String expected_content = "<html><body><h1>Delicious tasty cheese\nAnother great line of content</h1></body></html>";
-        writeStringToFile(expected_content, "brollies.html");
+        FileHelper.writeStringToFile(expected_content, "brollies.html");
 
         Response response = fileHandler.respondTo(getRequest("/brollies.html"));
 
@@ -52,11 +52,5 @@ public class FileHandlerTest {
         request.method = "GET";
         request.route = route;
         return request;
-    }
-
-    private void writeStringToFile(String expected, String fileName) throws IOException {
-        FileWriter out = new FileWriter(fileName);
-        out.write(expected);
-        out.close();
     }
 }

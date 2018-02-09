@@ -10,12 +10,15 @@ import java.net.URL;
 import static org.junit.Assert.assertEquals;
 
 public class MainTest {
+
+    public static final String PAGE_CONTENT = "Delicious.\n";
+
     @Test
-    @Ignore
     public void EndToEndTest() throws IOException {
-        Main.main(new String[]{"8080"});
-        String actual = makeGetRequest(new URL("http://localhost:8080/cheese.txt"));
-        assertEquals("Delicious.\n", actual);
+        Main.main(new String[]{"8020"});
+        FileHelper.writeStringToFile(PAGE_CONTENT, "cheese.txt");
+        String actual = makeGetRequest(new URL("http://localhost:8020/cheese.txt"));
+        assertEquals(PAGE_CONTENT, actual);
     }
 
     private String makeGetRequest(URL url) throws IOException {
