@@ -5,6 +5,9 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.concurrent.ExecutorService;
+
+import static java.util.concurrent.Executors.newCachedThreadPool;
 
 public class WebServer {
     private ServerSocket server;
@@ -19,28 +22,35 @@ public class WebServer {
 
     public void Start() throws IOException {
         server = new ServerSocket(port);
+        ExecutorService requestPool = newCachedThreadPool();
         Thread t = new Thread(() -> {
             while(true) {
                 try {
-                    Socket newSocket = server.accept();
-
-                    Request request = readRequest(newSocket);
-                    Response response = this.requestRouter.respondTo(request);
-                    writeResponse(newSocket, response);
-
-                    newSocket.close();
-                }
-                catch (SocketException e) {
+                    queueConnection(requestPool, server.accept());
+                } catch (SocketException e) {
                     // swallow exceptions
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
         t.start();
     }
+
+    private void queueConnection(ExecutorService requestPool, Socket newSocket) {
+        requestPool.submit(() -> {
+            try {
+                Request request = readRequest(newSocket);
+                Response response = this.requestRouter.respondTo(request);
+                writeResponse(newSocket, response);
+
+                newSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 
     private Request readRequest(Socket newSocket) throws IOException {
         InputStreamReader isr = new InputStreamReader(newSocket.getInputStream());
