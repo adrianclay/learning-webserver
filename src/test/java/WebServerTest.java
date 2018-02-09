@@ -1,5 +1,6 @@
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -84,6 +85,14 @@ public class WebServerTest {
         assertEquals(br.readLine(), "Content-Type: text/plain");
         assertEquals(br.readLine(), "");
         s.close();
+    }
+
+    @Test()
+    public void ServerHandlesEmptyRequestGracefully() throws Exception {
+        Socket s = connectToServer();
+        s.close();
+
+        ServerRespondsToConnection();
     }
 
     private Socket connectToServer() throws IOException {

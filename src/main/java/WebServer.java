@@ -46,7 +46,12 @@ public class WebServer {
         InputStreamReader isr = new InputStreamReader(newSocket.getInputStream());
         BufferedReader br = new BufferedReader(isr);
 
-        return getRequestFromString(br.readLine());
+        String s = br.readLine();
+        if (s == null) {
+            throw new IOException("Server received a null request");
+        } else {
+            return getRequestFromString(s);
+        }
     }
 
     private void writeResponse(Socket newSocket, Response response) throws IOException {
