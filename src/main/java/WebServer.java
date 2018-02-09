@@ -13,6 +13,7 @@ public class WebServer {
     private ServerSocket server;
     private int port;
     private RequestRouter requestRouter;
+    private ExecutorService requestPool;
 
     public WebServer(int port, RequestRouter requestRouter)
     {
@@ -22,7 +23,7 @@ public class WebServer {
 
     public void Start() throws IOException {
         server = new ServerSocket(port);
-        ExecutorService requestPool = newCachedThreadPool();
+        requestPool = newCachedThreadPool();
         Thread t = new Thread(() -> {
             while(true) {
                 try {
@@ -86,6 +87,7 @@ public class WebServer {
 
     public void Stop() throws IOException {
         server.close();
+        requestPool.shutdownNow();
     }
 }
 
