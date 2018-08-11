@@ -95,6 +95,12 @@ public class WebServerTest {
         ServerRespondsToConnection();
     }
 
+    @Test()
+    public void ServerHandlesConcurrentRequests() throws Exception {
+        Socket a = connectToServer();
+        ServerRespondsToConnection();
+    }
+
     private Socket connectToServer() throws IOException {
         return new Socket("localhost", PORT);
     }

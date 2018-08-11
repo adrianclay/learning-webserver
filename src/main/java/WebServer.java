@@ -22,25 +22,33 @@ public class WebServer {
         Thread t = new Thread(() -> {
             while(true) {
                 try {
-                    Socket newSocket = server.accept();
-
-                    Request request = readRequest(newSocket);
-                    Response response = this.requestRouter.respondTo(request);
-                    writeResponse(newSocket, response);
-
-                    newSocket.close();
-                }
-                catch (SocketException e) {
+                    queueConnection(server.accept());
+                } catch (SocketException e) {
                     // swallow exceptions
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
         t.start();
     }
+
+    private void queueConnection(Socket newSocket) {
+        Thread t = new Thread(() -> {
+            try {
+                Request request = readRequest(newSocket);
+                Response response = this.requestRouter.respondTo(request);
+                writeResponse(newSocket, response);
+
+                newSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        });
+        t.start();
+    }
+
 
     private Request readRequest(Socket newSocket) throws IOException {
         InputStreamReader isr = new InputStreamReader(newSocket.getInputStream());
