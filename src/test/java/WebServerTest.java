@@ -14,14 +14,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class WebServerTest {
-    private static final int PORT = 8090;
+    private static int PORT = 8090;
     private WebServer ws;
+    private int port;
     private MockRequestRouter requestRouter;
 
     @Before
     public void TestSetup() throws IOException {
+        port = PORT++;
         requestRouter = new MockRequestRouter();
-        this.ws = new WebServer(PORT, requestRouter);
+        this.ws = new WebServer(port, requestRouter);
         this.ws.Start();
     }
 
@@ -102,6 +104,6 @@ public class WebServerTest {
     }
 
     private Socket connectToServer() throws IOException {
-        return new Socket("localhost", PORT);
+        return new Socket("localhost", port);
     }
 }
