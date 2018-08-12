@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.Executors.newCachedThreadPool;
 
@@ -88,6 +89,11 @@ public class WebServer {
     public void Stop() throws IOException {
         server.close();
         requestPool.shutdownNow();
+        try {
+            requestPool.awaitTermination(30, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
